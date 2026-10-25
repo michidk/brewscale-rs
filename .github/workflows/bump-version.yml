@@ -1,5 +1,5 @@
 # @orcastrate
-# template: rust-bump-version
+# template: rust/bump-version
 # params:
 #   manifest_paths: [brewscale-core/Cargo.toml, brewscale-bookoo/Cargo.toml, brewscale-trouble/Cargo.toml, brewscale/Cargo.toml]
 #   release_token_secret: COMMITTER_TOKEN
