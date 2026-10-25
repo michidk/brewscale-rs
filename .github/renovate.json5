@@ -2,5 +2,13 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>michidk/workflows//templates/renovate"
+  ],
+  "packageRules": [
+    {
+      "description": "Keep bt-hci compatible with trouble-host 0.8 until its next upgrade",
+      "matchManagers": ["cargo"],
+      "matchPackageNames": ["bt-hci"],
+      "allowedVersions": "<0.11"
+    }
   ]
 }
