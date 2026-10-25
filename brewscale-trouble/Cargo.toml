@@ -15,6 +15,6 @@ categories = ["embedded", "no-std::no-alloc", "hardware-support"]
 [dependencies]
 brewscale-core = { version = "0.1.0", path = "../brewscale-core", default-features = false }
 trouble-host = { version = "0.8", default-features = false, features = ["central", "gatt", "scan"] }
-bt-hci = "0.11"
+bt-hci = "0.10"
 embassy-sync = "0.8"
 embassy-futures = "0.1"
