@@ -40,9 +40,6 @@ jobs:
           for target in thumbv7em-none-eabihf riscv32imc-unknown-none-elf; do
             cargo build -p brewscale --no-default-features --target "$target"
             cargo build -p brewscale --no-default-features --features bookoo --target "$target"
-            # umbrella with no protocol, and with each protocol on its own
-            cargo build -p brewscale --no-default-features --target "$target"
-            cargo build -p brewscale --no-default-features --features bookoo --target "$target"
           done
 
       - name: TrouBLE backend

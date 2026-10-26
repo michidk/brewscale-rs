@@ -71,27 +71,17 @@ dependencies = [
 name = "brewscale"
 version = "0.1.0"
 dependencies = [
- "brewscale-bookoo",
- "brewscale-core",
+ "bt-hci 0.10.1",
+ "embassy-futures",
+ "embassy-sync 0.8.0",
+ "trouble-host",
 ]
-
-[[package]]
-name = "brewscale-bookoo"
-version = "0.1.0"
-dependencies = [
- "brewscale-core",
-]
-
-[[package]]
-name = "brewscale-core"
-version = "0.1.0"
 
 [[package]]
 name = "brewscale-esp32c3"
 version = "0.1.0"
 dependencies = [
  "brewscale",
- "brewscale-trouble",
  "embassy-executor",
  "embassy-futures",
  "embassy-time",
@@ -103,17 +93,6 @@ dependencies = [
  "esp-radio",
  "esp-rtos",
  "log",
- "trouble-host",
-]
-
-[[package]]
-name = "brewscale-trouble"
-version = "0.1.0"
-dependencies = [
- "brewscale-core",
- "bt-hci 0.10.1",
- "embassy-futures",
- "embassy-sync 0.8.0",
  "trouble-host",
 ]
 

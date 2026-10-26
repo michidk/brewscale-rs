@@ -58,7 +58,7 @@ jobs:
           ref: ${{ github.sha }}
 
       - name: Install toolchain
-        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
 
 
       - name: Verify package version (brewscale/Cargo.toml)
@@ -81,69 +81,9 @@ jobs:
           package_name="$(jq -r '.name' <<< "$package")"
           printf 'name=%s\nversion=%s\n' "$package_name" "$package_version" >> "$GITHUB_OUTPUT"
 
-      - name: Verify package version (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) }}
-        id: package1
-        env:
-          MANIFEST_PATH: brewscale/Cargo.toml
-        run: |
-          package="$(
-            cargo metadata --no-deps --format-version 1 |
-              jq -ec '.packages[] | select((.manifest_path | gsub("\\\\"; "/")) == ((env.GITHUB_WORKSPACE | gsub("\\\\"; "/")) + "/" + env.MANIFEST_PATH))'
-          )"
-          package_version="$(jq -r '.version' <<< "$package")"
-          tag_version="${TAG_NAME#v}"
-
-          if [[ "$package_version" != "$tag_version" ]]; then
-            printf 'Cargo package version %s does not match tag %s\n' "$package_version" "$TAG_NAME" >&2
-            exit 1
-          fi
-          package_name="$(jq -r '.name' <<< "$package")"
-          printf 'name=%s\nversion=%s\n' "$package_name" "$package_version" >> "$GITHUB_OUTPUT"
-
-      - name: Verify package version (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) }}
-        id: package2
-        env:
-          MANIFEST_PATH: brewscale/Cargo.toml
-        run: |
-          package="$(
-            cargo metadata --no-deps --format-version 1 |
-              jq -ec '.packages[] | select((.manifest_path | gsub("\\\\"; "/")) == ((env.GITHUB_WORKSPACE | gsub("\\\\"; "/")) + "/" + env.MANIFEST_PATH))'
-          )"
-          package_version="$(jq -r '.version' <<< "$package")"
-          tag_version="${TAG_NAME#v}"
-
-          if [[ "$package_version" != "$tag_version" ]]; then
-            printf 'Cargo package version %s does not match tag %s\n' "$package_version" "$TAG_NAME" >&2
-            exit 1
-          fi
-          package_name="$(jq -r '.name' <<< "$package")"
-          printf 'name=%s\nversion=%s\n' "$package_name" "$package_version" >> "$GITHUB_OUTPUT"
-
-      - name: Verify package version (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) }}
-        id: package3
-        env:
-          MANIFEST_PATH: brewscale/Cargo.toml
-        run: |
-          package="$(
-            cargo metadata --no-deps --format-version 1 |
-              jq -ec '.packages[] | select((.manifest_path | gsub("\\\\"; "/")) == ((env.GITHUB_WORKSPACE | gsub("\\\\"; "/")) + "/" + env.MANIFEST_PATH))'
-          )"
-          package_version="$(jq -r '.version' <<< "$package")"
-          tag_version="${TAG_NAME#v}"
-
-          if [[ "$package_version" != "$tag_version" ]]; then
-            printf 'Cargo package version %s does not match tag %s\n' "$package_version" "$TAG_NAME" >&2
-            exit 1
-          fi
-          package_name="$(jq -r '.name' <<< "$package")"
-          printf 'name=%s\nversion=%s\n' "$package_name" "$package_version" >> "$GITHUB_OUTPUT"
-
 
       - name: Cache
-        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
 
 
       - name: Check whether the version is already published (brewscale/Cargo.toml)
@@ -164,7 +104,7 @@ jobs:
       - name: Authenticate with crates.io (brewscale/Cargo.toml)
         if: ${{ steps.registry0.outputs.published != 'true' }}
         id: crates-io-auth0
-        uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
+        uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1.0.5
 
       - name: Upload to crates.io (brewscale/Cargo.toml)
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) && steps.registry0.outputs.published == 'false' }}
@@ -172,84 +112,3 @@ jobs:
         env:
           MANIFEST_PATH: brewscale/Cargo.toml
           CARGO_REGISTRY_TOKEN: ${{ steps.crates-io-auth0.outputs.token }}
-
-      - name: Check whether the version is already published (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) }}
-        id: registry1
-        env:
-          PACKAGE_NAME: ${{ steps.package1.outputs.name }}
-          PACKAGE_VERSION: ${{ steps.package1.outputs.version }}
-        run: |
-          status="$(curl --silent --show-error --retry 3 --output /dev/null --write-out '%{http_code}' \
-            --user-agent 'michidk-workflows' "https://crates.io/api/v1/crates/$PACKAGE_NAME/$PACKAGE_VERSION")"
-          case "$status" in
-            200) echo 'published=true' >> "$GITHUB_OUTPUT" ;;
-            404) echo 'published=false' >> "$GITHUB_OUTPUT" ;;
-            *) printf 'Registry lookup failed with HTTP %s\n' "$status" >&2; exit 1 ;;
-          esac
-
-      - name: Authenticate with crates.io (brewscale/Cargo.toml)
-        if: ${{ steps.registry1.outputs.published != 'true' }}
-        id: crates-io-auth1
-        uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
-
-      - name: Upload to crates.io (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) && steps.registry1.outputs.published == 'false' }}
-        run: cargo publish --locked --manifest-path "$MANIFEST_PATH"
-        env:
-          MANIFEST_PATH: brewscale/Cargo.toml
-          CARGO_REGISTRY_TOKEN: ${{ steps.crates-io-auth1.outputs.token }}
-
-      - name: Check whether the version is already published (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) }}
-        id: registry2
-        env:
-          PACKAGE_NAME: ${{ steps.package2.outputs.name }}
-          PACKAGE_VERSION: ${{ steps.package2.outputs.version }}
-        run: |
-          status="$(curl --silent --show-error --retry 3 --output /dev/null --write-out '%{http_code}' \
-            --user-agent 'michidk-workflows' "https://crates.io/api/v1/crates/$PACKAGE_NAME/$PACKAGE_VERSION")"
-          case "$status" in
-            200) echo 'published=true' >> "$GITHUB_OUTPUT" ;;
-            404) echo 'published=false' >> "$GITHUB_OUTPUT" ;;
-            *) printf 'Registry lookup failed with HTTP %s\n' "$status" >&2; exit 1 ;;
-          esac
-
-      - name: Authenticate with crates.io (brewscale/Cargo.toml)
-        if: ${{ steps.registry2.outputs.published != 'true' }}
-        id: crates-io-auth2
-        uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
-
-      - name: Upload to crates.io (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) && steps.registry2.outputs.published == 'false' }}
-        run: cargo publish --locked --manifest-path "$MANIFEST_PATH"
-        env:
-          MANIFEST_PATH: brewscale/Cargo.toml
-          CARGO_REGISTRY_TOKEN: ${{ steps.crates-io-auth2.outputs.token }}
-
-      - name: Check whether the version is already published (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) }}
-        id: registry3
-        env:
-          PACKAGE_NAME: ${{ steps.package3.outputs.name }}
-          PACKAGE_VERSION: ${{ steps.package3.outputs.version }}
-        run: |
-          status="$(curl --silent --show-error --retry 3 --output /dev/null --write-out '%{http_code}' \
-            --user-agent 'michidk-workflows' "https://crates.io/api/v1/crates/$PACKAGE_NAME/$PACKAGE_VERSION")"
-          case "$status" in
-            200) echo 'published=true' >> "$GITHUB_OUTPUT" ;;
-            404) echo 'published=false' >> "$GITHUB_OUTPUT" ;;
-            *) printf 'Registry lookup failed with HTTP %s\n' "$status" >&2; exit 1 ;;
-          esac
-
-      - name: Authenticate with crates.io (brewscale/Cargo.toml)
-        if: ${{ steps.registry3.outputs.published != 'true' }}
-        id: crates-io-auth3
-        uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
-
-      - name: Upload to crates.io (brewscale/Cargo.toml)
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.auth-only) && steps.registry3.outputs.published == 'false' }}
-        run: cargo publish --locked --manifest-path "$MANIFEST_PATH"
-        env:
-          MANIFEST_PATH: brewscale/Cargo.toml
-          CARGO_REGISTRY_TOKEN: ${{ steps.crates-io-auth3.outputs.token }}
