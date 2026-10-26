@@ -86,18 +86,15 @@ and [`examples/esp32c3/src/bin/scale.rs`](https://github.com/michidk/brewscale/b
 3. In `brewscale/Cargo.toml` add an optional dependency and a feature
    (`<vendor> = ["dep:brewscale-<vendor>"]`, plus the `std` forwarding line).
 4. Add one line to the `protocols!` list in `brewscale/src/any.rs`.
-5. Add the crate to the workspace and to `manifest_paths` in
-   `.github/workflows/bump-version.yml` and `publish-cratesio.yml` (list
-   dependencies first).
+5. Keep the single `brewscale/Cargo.toml` manifest in the release workflows.
 
 [`brewscale/src/core/scale.rs`](https://github.com/michidk/brewscale/blob/main/brewscale/src/core/scale.rs) contains a ten-line
 toy protocol test showing the minimum.
 
 ## Adding a backend
 
-Implement `Transport`, `Link` and `Notifications` from `brewscale-core`
-(`brewscale-trouble` and [`brewscale/src/btleplug_transport.rs`](https://github.com/michidk/brewscale/blob/main/brewscale/src/btleplug_transport.rs) are the
-references). `Notifications::next` must be cancel-safe.
+Implement `Transport`, `Link` and `Notifications` from the core module.
+The `trouble` module and [`brewscale/src/btleplug_transport.rs`](https://github.com/michidk/brewscale/blob/main/brewscale/src/btleplug_transport.rs) are the reference backends. `Notifications::next` must be cancel-safe.
 
 ## ESP32
 
