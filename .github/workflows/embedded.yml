@@ -38,19 +38,19 @@ jobs:
       - name: Core and protocols without std or alloc
         run: |
           for target in thumbv7em-none-eabihf riscv32imc-unknown-none-elf; do
-            cargo build -p brewscale-core --no-default-features --target "$target"
-            cargo build -p brewscale-bookoo --no-default-features --target "$target"
+            cargo build -p brewscale --no-default-features --target "$target"
+            cargo build -p brewscale --no-default-features --features bookoo --target "$target"
             # umbrella with no protocol, and with each protocol on its own
             cargo build -p brewscale --no-default-features --target "$target"
             cargo build -p brewscale --no-default-features --features bookoo --target "$target"
           done
 
       - name: TrouBLE backend
-        run: cargo build -p brewscale-trouble --target thumbv7em-none-eabihf
+        run: cargo build -p brewscale --features trouble --target thumbv7em-none-eabihf
 
       # ESP32-C3 has no atomic CAS; the firmware gets it from esp-hal (see firmware job).
       - name: TrouBLE backend on RISC-V
-        run: cargo build -p brewscale-trouble --target riscv32imc-unknown-none-elf
+        run: cargo build -p brewscale --features trouble --target riscv32imc-unknown-none-elf
         env:
           RUSTFLAGS: -D warnings --cfg portable_atomic_unsafe_assume_single_core
 

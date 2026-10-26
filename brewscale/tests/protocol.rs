@@ -1,5 +1,5 @@
-use brewscale_bookoo::{Bookoo, Mini, Model, Ultra};
-use brewscale_core::*;
+use brewscale::bookoo::{Bookoo, Mini, Model, Ultra};
+use brewscale::*;
 
 fn packet(ty: u8, data: [u8; 17]) -> [u8; 20] {
     let mut p = [0u8; 20];

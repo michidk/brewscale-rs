@@ -6,7 +6,7 @@ weight notifications, logs each measurement, sends a tare command after the
 first one, and reconnects when the link drops (including 10 s of silence).
 
 Stack: `esp-hal` 1.x + `esp-rtos` (embassy) + `esp-radio` BLE controller →
-`trouble-host` → `brewscale-trouble` + `brewscale` (protocols by feature). Logging: `log` over
+`trouble-host` → `brewscale` with the `trouble` feature (protocols by feature). Logging: `log` over
 `esp-println` (UART/USB-serial-JTAG), level from the `ESP_LOG` env var
 (default `info`, set in `.cargo/config.toml`).
 
@@ -50,7 +50,7 @@ disconnected`, then it rescans and reconnects.
 * The only heap use is `esp_alloc::heap_allocator!(72 KiB)` for the `esp-radio`
   controller driver. `brewscale-*` and `trouble-host` allocate nothing.
 * Targets without atomic CAS (C3) get atomics through `esp-hal`, which enables `portable-atomic`'s `unsafe-assume-single-core`;
-  a bare `cargo build -p brewscale-trouble --target riscv32imc-unknown-none-elf`
+  a bare `cargo build -p brewscale --features trouble --target riscv32imc-unknown-none-elf`
   needs `RUSTFLAGS="--cfg portable_atomic_unsafe_assume_single_core"`.
 * Other chips: change the `esp32c3` feature names in `Cargo.toml`, the target in
   `.cargo/config.toml`, and (for Xtensa chips) use the `esp` toolchain from `espup`.

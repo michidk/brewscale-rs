@@ -4,16 +4,13 @@
 //! Service `0x0FFE`; notify `0xFF11`; write `0xFF12`. Every packet is
 //! `[0x03, type, data.., xor]` where `xor` is the XOR of all preceding bytes.
 
-#![no_std]
-#![forbid(unsafe_code)]
-
 mod mini;
 mod ultra;
 
 pub use mini::Mini;
 pub use ultra::Ultra;
 
-use brewscale_core::{
+use crate::core::{
     Advertisement, AutoBrewEvent, AutoBrewState, Capabilities, Command, DecodeError, Detect, EncodeError, Event, Frame,
     Measurement, Protocol, WeightUnit,
 };

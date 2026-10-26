@@ -1,4 +1,4 @@
-use brewscale_core::{
+use crate::core::{
     Advertisement, Capabilities, Command, DecodeError, Detect, EncodeError, Event, Frame, Protocol, Scale,
 };
 
@@ -60,5 +60,5 @@ macro_rules! protocols {
 }
 
 protocols! {
-    "bookoo" => Bookoo(brewscale_bookoo::Bookoo),
+    "bookoo" => Bookoo(crate::bookoo::Bookoo),
 }

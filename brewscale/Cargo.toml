@@ -1,6 +1,6 @@
 [package]
 name = "brewscale"
-description = "Protocol-agnostic BLE coffee-scale API: pick protocols by feature, pick a BLE backend; re-exports brewscale-core"
+description = "Protocol-agnostic BLE coffee-scale API for desktop and embedded systems"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -9,23 +9,23 @@ license.workspace = true
 repository.workspace = true
 homepage.workspace = true
 readme = "../README.md"
-keywords = ["no-std", "ble", "scale", "coffee", "btleplug"]
+keywords = ["no-std", "ble", "scale", "coffee", "embedded"]
 categories = ["embedded", "no-std", "hardware-support"]
 
 [dependencies]
-brewscale-core = { version = "0.1.0", path = "../brewscale-core", default-features = false }
-brewscale-bookoo = { version = "0.1.0", path = "../brewscale-bookoo", default-features = false, optional = true }
 btleplug = { version = "0.13", optional = true }
 futures = { version = "0.3", default-features = false, features = ["std"], optional = true }
 tokio = { version = "1", default-features = false, features = ["macros"], optional = true }
 uuid = { version = "1", optional = true }
+trouble-host = { version = "0.8", default-features = false, features = ["central", "gatt", "scan"], optional = true }
+bt-hci = { version = "0.10", optional = true }
+embassy-sync = { version = "0.8", optional = true }
+embassy-futures = { version = "0.1", optional = true }
 
-# Bundle libdbus on Linux so `btleplug` builds without libdbus-1-dev/pkg-config.
 [target.'cfg(target_os = "linux")'.dependencies]
 libdbus-sys = { version = "0.2", features = ["vendored"], optional = true }
 
 [dev-dependencies]
-brewscale-core = { path = "../brewscale-core", features = ["mock"] }
 tokio = { version = "=1.54.1", features = ["rt-multi-thread", "time", "macros"] }
 
 [package.metadata.docs.rs]
@@ -33,14 +33,11 @@ all-features = true
 
 [features]
 default = ["bookoo"]
-std = ["brewscale-core/std", "brewscale-bookoo?/std"]
-
-# Protocols: enable only the ones you need. See src/any.rs to add one.
-bookoo = ["dep:brewscale-bookoo"]
-
-# Backends. Embedded backends live in their own crates (e.g. brewscale-trouble).
-# Linux (BlueZ), Windows and macOS BLE central via btleplug. Needs a Tokio runtime.
+std = []
+mock = []
+bookoo = []
 btleplug = ["std", "dep:btleplug", "dep:futures", "dep:tokio", "dep:uuid", "dep:libdbus-sys"]
+trouble = ["dep:trouble-host", "dep:bt-hci", "dep:embassy-sync", "dep:embassy-futures"]
 
 [[example]]
 name = "desktop"

@@ -14,29 +14,24 @@ protocols.
 The current built-in protocol support is **BOOKOO Themis Mini** and **Themis
 Ultra**, using the vendor's [open protocol docs](https://github.com/BooKooCode/OpenSource).
 
-## Crates
+## Crate
 
-| Crate | Role | `no_std` | Heap |
-|---|---|---|---|
-| `brewscale-core` | Vendor-neutral types, `Protocol`/`Detect` traits, `Transport`/`Link` traits, `Scale` driver | yes | none |
-| `brewscale-bookoo` | BOOKOO protocol (`Mini`, `Ultra`, runtime-selected `Bookoo`) | yes | none |
-| `brewscale-trouble` | Embedded BLE backend on [TrouBLE](https://github.com/embassy-rs/trouble), any HCI controller (ESP32, nRF, ...) | yes | none |
-| `brewscale` | Umbrella: re-exports core, protocols by feature, `AnyProtocol`, `btleplug` desktop backend | unless `btleplug` | unless `btleplug` |
-| `examples/esp32c3` | ESP32-C3 firmware | yes | radio driver only |
-
-Each protocol is its own crate, and `brewscale-core` knows none of them.
+`brewscale` is the only published crate. It contains the vendor-neutral core,
+BOOKOO protocol support, the optional desktop `btleplug` backend, and the
+optional embedded TrouBLE backend. Most applications only need this one
+dependency:
 
 ```toml
-# Desktop: all protocols (default) + btleplug backend
+# Desktop: BOOKOO protocol + btleplug backend
 brewscale = { version = "0.1", features = ["btleplug"] }
 
-# Embedded: only the protocols you want, no std, no allocator
-brewscale = { version = "0.1", default-features = false, features = ["bookoo"] }
-brewscale-trouble = "0.1"
-
-# Just the traits and driver, for writing your own protocol or backend
-brewscale-core = { version = "0.1", default-features = false }
+# Embedded: BOOKOO protocol + TrouBLE backend
+brewscale = { version = "0.1", default-features = false, features = ["bookoo", "trouble"] }
 ```
+
+The `brewscale-core`, `brewscale-bookoo`, and `brewscale-trouble` source
+modules are internal implementation modules inside `brewscale`; they are not
+separate published packages.
 
 ## Protocol-agnostic applications
 
@@ -85,7 +80,7 @@ and [`examples/esp32c3/src/bin/scale.rs`](https://github.com/michidk/brewscale/b
 
 ## Adding a protocol
 
-1. Create `brewscale-<vendor>` depending on `brewscale-core` (`no_std`).
+1. Add a protocol module inside `brewscale` and keep it `no_std`.
 2. Implement `Protocol` and `Detect` for your type. Reuse the shared `Event`
    and `Command` types; add a variant to them in core if your device needs one.
 3. In `brewscale/Cargo.toml` add an optional dependency and a feature
@@ -95,7 +90,7 @@ and [`examples/esp32c3/src/bin/scale.rs`](https://github.com/michidk/brewscale/b
    `.github/workflows/bump-version.yml` and `publish-cratesio.yml` (list
    dependencies first).
 
-[`brewscale-core/src/scale.rs`](https://github.com/michidk/brewscale/blob/main/brewscale-core/src/scale.rs) contains a ten-line
+[`brewscale/src/core/scale.rs`](https://github.com/michidk/brewscale/blob/main/brewscale/src/core/scale.rs) contains a ten-line
 toy protocol test showing the minimum.
 
 ## Adding a backend
@@ -109,14 +104,11 @@ references). `Notifications::next` must be cancel-safe.
 See [`examples/esp32c3`](https://github.com/michidk/brewscale/blob/main/examples/esp32c3/README.md) for hardware, flashing and
 expected output. Target: **ESP32-C3** (stable Rust, `riscv32imc-unknown-none-elf`).
 ESP32-S3 needs the Xtensa toolchain (`espup`) and is not built here, but
-`brewscale-trouble` is chip-independent: any `trouble-host` controller works.
+The `trouble` feature is chip-independent: any `trouble-host` controller works.
 
 ## Features
 
-* `brewscale-core`: `std` (impl `std::error::Error`), `mock` (in-memory transport
-  for tests; also `no_std`).
-* `brewscale-bookoo`: `std`.
-* `brewscale`: `bookoo` (default), `std`, `btleplug` (implies `std`).
+* `brewscale`: `bookoo` (default), `std`, `mock`, `btleplug` (implies `std`), and `trouble`.
 
 ## Testing
 

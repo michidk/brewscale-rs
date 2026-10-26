@@ -1,4 +1,4 @@
-//! [`brewscale_core::Transport`] on top of [`trouble_host`]: a BLE central
+//! [`crate::core::Transport`] on top of [`trouble_host`]: a BLE central
 //! that works with any HCI [`Controller`] (e.g. ESP32 via `esp-radio`).
 //!
 //! `no_std`, no heap. The caller owns the TrouBLE [`Stack`] and must keep its
@@ -11,12 +11,10 @@
 //! let mut transport = TroubleTransport::new(&stack, &inbox);
 //! join(runner.run_with_handler(&inbox), app(&mut transport)).await;
 //! ```
-#![no_std]
-#![forbid(unsafe_code)]
 
 use core::future::Future;
 
-use brewscale_core::{Advertisement, ErrorKind, Link, Notifications, Transport, TransportError};
+use crate::core::{Advertisement, ErrorKind, Link, Notifications, Transport, TransportError};
 use bt_hci::cmd::le::{
     LeAddDeviceToFilterAcceptList, LeClearFilterAcceptList, LeCreateConn, LeSetScanEnable, LeSetScanParams,
 };

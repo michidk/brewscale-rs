@@ -4,7 +4,7 @@
 #![no_main]
 
 use brewscale::{find, AnyProtocol, Error, Event, Link, Protocol, Scale, Transport, TransportError};
-use brewscale_trouble::{ScanInbox, TroubleTransport};
+use brewscale::trouble::{ScanInbox, TroubleTransport};
 use embassy_executor::Spawner;
 use embassy_futures::join::join;
 use embassy_futures::select::{select, Either};

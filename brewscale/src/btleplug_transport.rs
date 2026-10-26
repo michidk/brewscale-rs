@@ -2,7 +2,7 @@ use std::boxed::Box;
 use std::pin::Pin;
 use std::sync::{Mutex, PoisonError};
 
-use brewscale_core::{Advertisement, ErrorKind, Link, Notifications, Transport, TransportError};
+use crate::core::{Advertisement, ErrorKind, Link, Notifications, Transport, TransportError};
 use btleplug::api::bleuuid::uuid_from_u16;
 use btleplug::api::{
     Central, CentralEvent, CharPropFlags, Characteristic, Manager as _, Peripheral as _, ScanFilter, ValueNotification,

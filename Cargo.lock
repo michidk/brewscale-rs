@@ -61,35 +61,15 @@ dependencies = [
 name = "brewscale"
 version = "0.1.0"
 dependencies = [
- "brewscale-bookoo",
- "brewscale-core",
+ "bt-hci",
  "btleplug",
+ "embassy-futures",
+ "embassy-sync",
  "futures",
  "libdbus-sys",
  "tokio",
- "uuid",
-]
-
-[[package]]
-name = "brewscale-bookoo"
-version = "0.1.0"
-dependencies = [
- "brewscale-core",
-]
-
-[[package]]
-name = "brewscale-core"
-version = "0.1.0"
-
-[[package]]
-name = "brewscale-trouble"
-version = "0.1.0"
-dependencies = [
- "brewscale-core",
- "bt-hci",
- "embassy-futures",
- "embassy-sync",
  "trouble-host",
+ "uuid",
 ]
 
 [[package]]

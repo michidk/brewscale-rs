@@ -1,7 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["brewscale-core", "brewscale-bookoo", "brewscale", "brewscale-trouble"]
-# Built separately: needs the riscv32imc target and its own .cargo/config.toml.
+members = ["brewscale"]
 exclude = ["examples/esp32c3"]
 
 [workspace.package]

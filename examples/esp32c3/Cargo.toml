@@ -5,8 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-brewscale = { path = "../../brewscale", default-features = false, features = ["bookoo"] }
-brewscale-trouble = { path = "../../brewscale-trouble" }
+brewscale = { path = "../../brewscale", default-features = false, features = ["bookoo", "trouble"] }
 trouble-host = { version = "0.8", default-features = false, features = ["central", "gatt", "scan", "log", "default-packet-pool-mtu-255"] }
 embassy-executor = "0.10"
 embassy-futures = "0.1"

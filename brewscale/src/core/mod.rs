@@ -7,8 +7,6 @@
 //! ([`Protocol`]) is pure functions over byte slices; Bluetooth is reached only
 //! through the [`Transport`]/[`Link`] traits, implemented by backend crates
 //! (`brewscale` for desktop, `brewscale-trouble` for embedded).
-#![no_std]
-#![forbid(unsafe_code)]
 
 #[cfg(feature = "std")]
 extern crate std;
