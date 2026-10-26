@@ -42,3 +42,7 @@ trouble = ["dep:trouble-host", "dep:bt-hci", "dep:embassy-sync", "dep:embassy-fu
 [[example]]
 name = "desktop"
 required-features = ["btleplug", "bookoo"]
+
+[[test]]
+name = "driver"
+required-features = ["bookoo", "mock"]
