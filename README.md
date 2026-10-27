@@ -1,5 +1,7 @@
 # brewscale
 
+[![Crates.io](https://img.shields.io/crates/v/brewscale.svg)](https://crates.io/crates/brewscale) [![Documentation](https://docs.rs/brewscale/badge.svg)](https://docs.rs/brewscale)
+
 Protocol-agnostic BLE coffee-scale library for Rust, on desktop **and**
 microcontrollers. Write your application once against one API; add scale
 protocols and Bluetooth backends without changing application code.
@@ -16,7 +18,7 @@ Ultra**, using the vendor's [open protocol docs](https://github.com/BooKooCode/O
 
 ## Crate
 
-`brewscale` is the only published crate. It contains the vendor-neutral core,
+[`brewscale`](https://crates.io/crates/brewscale) is the only published crate. It contains the vendor-neutral core,
 BOOKOO protocol support, the optional desktop `btleplug` backend, and the
 optional embedded TrouBLE backend. Most applications only need this one
 dependency:
