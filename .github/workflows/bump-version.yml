@@ -14,7 +14,7 @@ on:
         description: Version bump type
         required: true
         type: choice
-        default: patch
+        default: auto
         options:
           - auto
           - patch
@@ -99,6 +99,7 @@ jobs:
           fi
           if [[ "$BUMP_TYPE" == auto ]]; then
             VERSION="$("$RUNNER_TEMP/git-cliff/bin/git-cliff" --bumped-version)"
+            VERSION="${VERSION#v}"
           else
             IFS=. read -r major minor patch <<< "$current"
             case "$BUMP_TYPE" in
