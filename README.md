@@ -31,9 +31,8 @@ brewscale = { version = "0.1", features = ["btleplug"] }
 brewscale = { version = "0.1", default-features = false, features = ["bookoo", "trouble"] }
 ```
 
-The `brewscale-core`, `brewscale-bookoo`, and `brewscale-trouble` source
-modules are internal implementation modules inside `brewscale`; they are not
-separate published packages.
+The `core`, `bookoo`, and `trouble` source modules live inside `brewscale`;
+they are not separate published packages.
 
 ## Protocol-agnostic applications
 
@@ -64,8 +63,8 @@ reconnect. `protocol.capabilities()` tells you what the connected scale
 supports (timer, dose weight, ...); unsupported commands return
 `EncodeError::Unsupported`.
 
-Full programs: [`brewscale/examples/desktop.rs`](https://github.com/michidk/brewscale/blob/main/brewscale/examples/desktop.rs)
-and [`examples/esp32c3/src/bin/scale.rs`](https://github.com/michidk/brewscale/blob/main/examples/esp32c3/src/bin/scale.rs).
+Full programs: [`brewscale/examples/desktop.rs`](https://github.com/michidk/brewscale-rs/blob/main/brewscale/examples/desktop.rs)
+and [`examples/esp32c3/src/bin/scale.rs`](https://github.com/michidk/brewscale-rs/blob/main/examples/esp32c3/src/bin/scale.rs).
 
 ## Design
 
@@ -82,28 +81,27 @@ and [`examples/esp32c3/src/bin/scale.rs`](https://github.com/michidk/brewscale/b
 
 ## Adding a protocol
 
-1. Add a protocol module inside `brewscale` and keep it `no_std`.
+1. Add a protocol module under `brewscale/src/`, gated by its feature in
+   `lib.rs`, and keep it `no_std`.
 2. Implement `Protocol` and `Detect` for your type. Reuse the shared `Event`
    and `Command` types; add a variant to them in core if your device needs one.
-3. In `brewscale/Cargo.toml` add an optional dependency and a feature
-   (`<vendor> = ["dep:brewscale-<vendor>"]`, plus the `std` forwarding line).
+3. In `brewscale/Cargo.toml` add a feature for the vendor (`<vendor> = []`).
 4. Add one line to the `protocols!` list in `brewscale/src/any.rs`.
-5. Keep the single `brewscale/Cargo.toml` manifest in the release workflows.
 
-[`brewscale/src/core/scale.rs`](https://github.com/michidk/brewscale/blob/main/brewscale/src/core/scale.rs) contains a ten-line
+[`brewscale/src/core/scale.rs`](https://github.com/michidk/brewscale-rs/blob/main/brewscale/src/core/scale.rs) contains a ten-line
 toy protocol test showing the minimum.
 
 ## Adding a backend
 
 Implement `Transport`, `Link` and `Notifications` from the core module.
-The `trouble` module and [`brewscale/src/btleplug_transport.rs`](https://github.com/michidk/brewscale/blob/main/brewscale/src/btleplug_transport.rs) are the reference backends. `Notifications::next` must be cancel-safe.
+The `trouble` module and [`brewscale/src/btleplug_transport.rs`](https://github.com/michidk/brewscale-rs/blob/main/brewscale/src/btleplug_transport.rs) are the reference backends. `Notifications::next` must be cancel-safe.
 
 ## ESP32
 
-See [`examples/esp32c3`](https://github.com/michidk/brewscale/blob/main/examples/esp32c3/README.md) for hardware, flashing and
+See [`examples/esp32c3`](https://github.com/michidk/brewscale-rs/blob/main/examples/esp32c3/README.md) for hardware, flashing and
 expected output. Target: **ESP32-C3** (stable Rust, `riscv32imc-unknown-none-elf`).
 ESP32-S3 needs the Xtensa toolchain (`espup`) and is not built here, but
-The `trouble` feature is chip-independent: any `trouble-host` controller works.
+the `trouble` feature is chip-independent: any `trouble-host` controller works.
 
 ## Features
 
@@ -112,7 +110,7 @@ The `trouble` feature is chip-independent: any `trouble-host` controller works.
 ## Testing
 
 ```sh
-cargo test --workspace                                    # parsers + driver over a mock transport
+cargo test --workspace --all-features                     # parsers + driver over a mock transport
 cargo build -p brewscale --no-default-features --target thumbv7em-none-eabihf   # no std, no alloc
 (cd examples/esp32c3 && cargo build --release)            # real firmware
 ```
